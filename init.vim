@@ -1,5 +1,4 @@
 " Stuff to consider adding:
-"   NerdTree instead of netrw
 "   find something to indent sql?
 
 " Set Leader
@@ -158,11 +157,14 @@ filetype plugin on     " Built-in file browsing
     " Opens NERDTree by default
     autocmd StdinReadPre * let s:std_in=1
     autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
     " Map opening NERDTree
     nnoremap <Leader>f :NERDTreeToggle<Enter>
+
     " Closing automatically
     let NERDTreeQuitOnOpen = 1
     autocmd bufenter * if (winnr("$") == 1 && exists ("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
     " Cosmetics
     let NERDTreeMinimalUI = 1
     let NERDTreeDirArrows = 1
