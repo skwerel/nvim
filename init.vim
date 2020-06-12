@@ -169,5 +169,6 @@ filetype plugin on     " Built-in file browsing
     " Cosmetics
     let NERDTreeMinimalUI = 1
     let NERDTreeDirArrows = 1
+    
 " Commentary
     autocmd FileType vb setlocal commentstring='\%s
