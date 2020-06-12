@@ -5,6 +5,7 @@
 let mapleader=","
 
 " Set working directory
+let $HOME = $USERPROFILE
 :cd $USERPROFILE
 " Load plugins
 call plug#begin()
@@ -168,3 +169,5 @@ filetype plugin on     " Built-in file browsing
     " Cosmetics
     let NERDTreeMinimalUI = 1
     let NERDTreeDirArrows = 1
+" Commentary
+    autocmd FileType vb setlocal commentstring='\%s
