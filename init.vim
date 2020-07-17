@@ -33,6 +33,14 @@ call plug#begin()
     " Nerdtree
     Plug 'preservim/nerdtree'
 
+    " vim-sql
+    " Plug 'cosminadrianpopescu/vim-sql-workbench'
+    " Plug 'tpope/vim-dadbod'
+
+    " fuzzy finder
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+
 call plug#end()
 
 " set autochdir          " Switch to current file's directory - disabled for
@@ -89,8 +97,8 @@ filetype plugin on     " Built-in file browsing
 
 " Tabs
     set expandtab
-    set tabstop=4
-    set shiftwidth=4
+    " set tabstop=4
+    " set shiftwidth=4
     set nojoinspaces
 
 " File Finding - No FuzzyFinder Plugin!!
@@ -169,6 +177,18 @@ filetype plugin on     " Built-in file browsing
     " Cosmetics
     let NERDTreeMinimalUI = 1
     let NERDTreeDirArrows = 1
-    
+    let NERDTreeNaturalSort = 1
+    let NERDTreeShowBookmarks = 1
 " Commentary
+
+    autocmd FileType * setlocal commentstring=--\%s | set tabstop=4 | set shiftwidth=4
     autocmd FileType vb setlocal commentstring='\%s
+    autocmd FileType sql setlocal commentstring=--\%s | setlocal tabstop=2 | setlocal shiftwidth=2
+
+" fzf
+    nmap <C-P> :FZF<CR>
+
+" vim-sql
+   "let g:sw_exe = "c:/Users/neshleman/builds/Workbench-Build125-with-optional-libs/sqlwbconsole.exe"
+   "let g:sw_tmp = "c:/Users/neshleman/tmp"
+   "let g:sw_config_dir = "C:/Users/neshleman/.sqlworkbench"
