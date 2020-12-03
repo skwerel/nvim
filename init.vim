@@ -41,6 +41,9 @@ call plug#begin()
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
 
+    " SQL Tool
+    Plug '~\AppData\Local\nvim\plugged-manual\sql_tool_swb'
+
 call plug#end()
 
 " set autochdir          " Switch to current file's directory - disabled for
@@ -48,6 +51,7 @@ call plug#end()
 set nocompatible       " Disables vi compatibility
 syntax enable          " Enables syntax highlighting (neovim default)
 filetype plugin on     " Built-in file browsing
+set ignorecase
 
 " Colorscheme options.
     colorscheme gruvbox
@@ -164,8 +168,8 @@ filetype plugin on     " Built-in file browsing
 
 " NERDTree
     " Opens NERDTree by default
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " autocmd StdinReadPre * let s:std_in=1
+    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
     " Map opening NERDTree
     nnoremap <Leader>f :NERDTreeToggle<Enter>
@@ -179,16 +183,21 @@ filetype plugin on     " Built-in file browsing
     let NERDTreeDirArrows = 1
     let NERDTreeNaturalSort = 1
     let NERDTreeShowBookmarks = 1
-" Commentary
+
+    " Commentary
 
     autocmd FileType * setlocal commentstring=--\%s | set tabstop=4 | set shiftwidth=4
-    autocmd FileType vb setlocal commentstring='\%s
-    autocmd FileType sql setlocal commentstring=--\%s | setlocal tabstop=2 | setlocal shiftwidth=2
+    autocmd FileType vb setlocal commentstring='\%s | set tabstop=2 | set shiftwidth=2
+    autocmd FileType sql setlocal commentstring=--\%s | setlocal tabstop=4 | setlocal shiftwidth=4
 
 " fzf
     nmap <C-P> :FZF<CR>
 
+" sql_tool
+    let g:sqlwbc_java_bin = 'java'
+    let g:sqlwbc_swb_jarfile = 'c:\Users\PH5325\builds\SQLWorkbench\sqlworkbench.jar'
+
 " vim-sql
-   "let g:sw_exe = "c:/Users/neshleman/builds/Workbench-Build125-with-optional-libs/sqlwbconsole.exe"
-   "let g:sw_tmp = "c:/Users/neshleman/tmp"
-   "let g:sw_config_dir = "C:/Users/neshleman/.sqlworkbench"
+   " let g:sw_exe = 'c:\Users\PH5325\builds\SQLWorkbench\sqlwbconsole.cmd'
+   " let g:sw_tmp = 'c:\Users\PH5325\tmp'
+   " let g:sw_config_dir = "C:/Users/neshleman/.sqlworkbench"
