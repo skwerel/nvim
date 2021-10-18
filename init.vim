@@ -53,6 +53,9 @@ syntax enable          " Enables syntax highlighting (neovim default)
 filetype plugin on     " Built-in file browsing
 set ignorecase
 
+" clipboard
+vnoremap <C-c> "+y
+"
 " Colorscheme options.
     colorscheme gruvbox
 
@@ -60,6 +63,9 @@ set ignorecase
     if maparg('<C-L>', 'n') ==# ''
         nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
     endif
+" Fix syntax with F12
+noremap <F12> <Esc>:syntax sync fromstart<CR>
+inoremap <F12> <C-o>:syntax sync fromstart<CR>
 
 " Whitespace
     " Characers for TAB, Trailing whitespace, and end of line
