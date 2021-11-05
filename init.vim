@@ -1,209 +1,129 @@
-" Stuff to consider adding:
-"   find something to indent sql?
+set exrc
+" The following works in linux only
+set guicursor=
+set relativenumber
+set nu
+set nohlsearch
+set hidden
+set noerrorbells
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+set noswapfile
+set nobackup
+set undodir=~/.vim/undodir
+set undofile
+set incsearch
+set termguicolors
+set scrolloff=8
+set colorcolumn=80
+set signcolumn=yes
 
-" Set Leader
-let mapleader=","
+call plug#begin('~/.vim/plugged')
 
-" Set working directory
-let $HOME = $USERPROFILE
-:cd $USERPROFILE
-" Load plugins
-call plug#begin()
-    " Visuals
-    Plug 'morhetz/gruvbox'
-    Plug 'itchyny/lightline.vim'
+Plug 'gruvbox-community/gruvbox'
+Plug 'preservim/nerdtree'
 
-    " Extend Repeating
-    Plug 'tpope/vim-repeat'
+" lsp
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/nvim-cmp'
 
-    " Custom Operators
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-commentary'
-    Plug 'vim-scripts/ReplaceWithRegister'
-    Plug 'christoomey/vim-titlecase'
-    Plug 'christoomey/vim-sort-motion'
-    Plug 'christoomey/vim-system-copy'
+" New plugins to learn:
+Plug 'mbbill/undotree'
+Plug 'tpope/vim-fugitive'
+Plug 'williamboman/nvim-lsp-installer'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-    " Custom Text Objects
-    Plug 'michaeljsmith/vim-indent-object'
-    Plug 'kana/vim-textobj-user'
-    Plug 'kana/vim-textobj-entire'
-    Plug 'kana/vim-textobj-line'
-
-    " Nerdtree
-    Plug 'preservim/nerdtree'
-
-    " vim-sql
-    " Plug 'cosminadrianpopescu/vim-sql-workbench'
-    " Plug 'tpope/vim-dadbod'
-
-    " fuzzy finder
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
-
-    " SQL Tool
-    Plug '~\AppData\Local\nvim\plugged-manual\sql_tool_swb'
+" telescope stuff
+Plug 'nvim-lua/plenary.nvim' " Required for Telescope
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 call plug#end()
 
-" set autochdir          " Switch to current file's directory - disabled for
-" advanced file searching
-set nocompatible       " Disables vi compatibility
-syntax enable          " Enables syntax highlighting (neovim default)
-filetype plugin on     " Built-in file browsing
-set ignorecase
 
-" clipboard
-vnoremap <C-c> "+y
-"
-" Colorscheme options.
-    colorscheme gruvbox
+let mapleader = " "
 
-" Use <C-L> to clear search highlighting
-    if maparg('<C-L>', 'n') ==# ''
-        nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-    endif
-" Fix syntax with F12
+nnoremap <Leader>f :NERDTreeToggle<Enter>
+nnoremap <F5> :UndotreeToggle<CR>
 noremap <F12> <Esc>:syntax sync fromstart<CR>
-inoremap <F12> <C-o>:syntax sync fromstart<CR>
+nnoremap <leader>pw :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
 
-" Whitespace
-    " Characers for TAB, Trailing whitespace, and end of line
-    if &listchars ==# 'eol:$'
-        set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
-    endif
-    set list           " Show problematic characters.
+" whitespace funtion
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfunction
 
-    " Remove trailing spaces.
-    function! TrimWhitespace()
-        let l:save = winsaveview()
-        %s/\s\+$//e
-        call winrestview(l:save)
-    endfunction
-    " FIXME: Do not call this on makefile and sv files.
-    autocmd BufWritePre * call TrimWhitespace()
-    nnoremap <leader>W :call TrimWhitespace()<CR>
+nnoremap <leader>w :call TrimWhitespace()<CR>
 
-    " Also highlight all tabs and trailing whitespace characters.
-    highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
-    match ExtraWhitespace /\s\+$\|\t/
+augroup TrimBeforeSave
+    autocmd!
+    autocmd BufWritePre * :call TrimWhitespace()
+augroup END
 
-" Line Numbering
-    set number
-    set rnu
+" NerdTree
+let NERDTreeQuitOnOpen = 1
+autocmd bufenter * if (winnr("$") == 1 && exists ("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-    " Relative numbering
-    function! NumberToggle()
-        if(&relativenumber == 1)
-            set nornu
-            set number
-        else
-            set rnu
-        endif
-    endfunc
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeNaturalSort = 1
+let NERDTreeShowBookmarks = 1
 
-    " Toggle between normal and relative numbering.
-    nnoremap <leader>r :call NumberToggle()<cr>
+" pylsp
+let g:gruvbox_contrast_dark = 'hard'
+if exists('+termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+let g:gruvbox_invert_selection='0'
 
-" Tabs
-    set expandtab
-    " set tabstop=4
-    " set shiftwidth=4
-    set nojoinspaces
+colorscheme gruvbox
+set background=dark
+highlight Normal guibg=none
 
-" File Finding - No FuzzyFinder Plugin!!
-    " Search through sub-directories when searching
-    " Provides tab-completion in all file finding functions
-    set path+=**
+" cmp
+set completeopt=menu,menuone,noselect,noinsert
 
-    " Display all matching files on tab complete
-    set wildmenu
+lua <<EOF
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
 
-" Autocompletion
-    " See |ins-completion| help file
-    " ^x^n for JUST this file
-    " ^x^f for filenames
-    " ^n for anything specified by the 'complete' option
-    " ^n and ^p to go back and forth in the suggestion list
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
+      end,
+    },
+    mapping = {
+      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.close(),
+      ['<C-y>'] = cmp.config.disable, -- If you want to remove the default `<C-y>` mapping, You can specify `cmp.config.disable` value.
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
 
-" netrw (File Browser)
-
-        " Tweaks for browsing
-    let g:netrw_banner=0        " disable annoying banner
-    let g:netrw_browse_split=4  " open in prior window
-    let g:netrw_altv=1          " open splits to the right
-    let g:netrw_liststyle=3     " tree view
-    let g:netrw_list_hide=netrw_gitignore#Hide()
-    let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
-
-    " NOW WE CAN:
-    " - :edit a folder to open a file browser
-    " - <CR>/v/t to open in an h-split/v-split/tab
-    " - check |netrw-browse-maps| for more mappings
-
-" Lightline
-    let g:lightline = {
-    \ 'colorscheme': 'gruvbox',
-    \ 'active': {
-    \   'left': [['mode', 'paste'], ['filename', 'modified']],
-    \   'right': [['lineinfo'], ['percent'], ['readonly', 'linter_warnings', 'linter_errors']]
-    \ },
-    \ 'component_expand': {
-    \   'linter_warnings': 'LightlineLinterWarnings',
-    \   'linter_errors': 'LightlineLinterErrors'
-    \ },
-    \ 'component_type': {
-    \   'readonly': 'error',
-    \   'linter_warnings': 'warning',
-    \   'linter_errors': 'error'
-    \ },
-    \ }
-    function! LightlineLinterWarnings() abort
-        let l:counts = neomake#statusline#LoclistCounts()
-    let l:warnings = get(l:counts, 'W', 0)
-    return l:warnings == 0 ? '' : printf('%d ◆', l:warnings)
-    endfunction
-    function! LightlineLinterErrors() abort
-    let l:counts = neomake#statusline#LoclistCounts()
-    let l:errors = get(l:counts, 'E', 0)
-    return l:errors == 0 ? '' : printf('%d ✗', l:errors)
-    endfunction
-
-    " Ensure lightline updates after neomake is done.
-    autocmd! User NeomakeFinished call lightline#update()
-
-" NERDTree
-    " Opens NERDTree by default
-    " autocmd StdinReadPre * let s:std_in=1
-    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
-    " Map opening NERDTree
-    nnoremap <Leader>f :NERDTreeToggle<Enter>
-
-    " Closing automatically
-    let NERDTreeQuitOnOpen = 1
-    autocmd bufenter * if (winnr("$") == 1 && exists ("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-    " Cosmetics
-    let NERDTreeMinimalUI = 1
-    let NERDTreeDirArrows = 1
-    let NERDTreeNaturalSort = 1
-    let NERDTreeShowBookmarks = 1
-
-    " Commentary
-
-    autocmd FileType * setlocal commentstring=--\%s | set tabstop=4 | set shiftwidth=4
-    autocmd FileType vb setlocal commentstring='\%s | set tabstop=2 | set shiftwidth=2
-    autocmd FileType sql setlocal commentstring=--\%s | setlocal tabstop=4 | setlocal shiftwidth=4
-
-" fzf
-    nmap <C-P> :FZF<CR>
-
-" sql_tool
-    let g:sqlwbc_java_bin = 'java'
-    let g:sqlwbc_swb_jarfile = 'c:\Users\PH5325\builds\SQLWorkbench\sqlworkbench.jar'
-
-" vim-sql
-   " let g:sw_exe = 'c:\Users\PH5325\builds\SQLWorkbench\sqlwbconsole.cmd'
-   " let g:sw_tmp = 'c:\Users\PH5325\tmp'
-   " let g:sw_config_dir = "C:/Users/neshleman/.sqlworkbench"
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  require('lspconfig').pylsp.setup {
+    capabilities = capabilities
+  }
